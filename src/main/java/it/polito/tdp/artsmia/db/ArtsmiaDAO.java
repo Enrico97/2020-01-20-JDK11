@@ -104,8 +104,9 @@ public class ArtsmiaDAO {
 			ResultSet res = st.executeQuery();
 			while (res.next()) {
 				
-				vertici.add(new Artists(res.getInt("artist_id"), res.getString("name")));
-				artisti.put(res.getInt("artist_id"), new Artists(res.getInt("artist_id"), res.getString("name")));
+				Artists a = new Artists(res.getInt("artist_id"), res.getString("name"));
+				vertici.add(a);
+				artisti.put(res.getInt("artist_id"), a);
 			}
 			conn.close();
 			return vertici;
@@ -118,12 +119,14 @@ public class ArtsmiaDAO {
 	
 	public List<Adiacenze> archi(String ruolo) {
 			this.vertici(ruolo);
-			String sql = "SELECT a1.artist_id as a1, a2.artist_id as a2, Count(distinct e1.exhibition_id) as peso FROM authorship as a1, authorship as a2, exhibition_objects as e1, exhibition_objects as e2 WHERE a1.role=a2.role and a1.artist_id>a2.artist_id and a1.object_id=e1.object_id and  a2.object_id=e2.object_id and e1.exhibition_id=e2.exhibition_id group by a1.artist_id, a2.artist_id";
+			String sql = "SELECT a1.artist_id as a1, a2.artist_id as a2, Count(distinct e1.exhibition_id) as peso FROM artists as a1, artists as a2, authorship as au1, authorship as au2, exhibition_objects as e1, exhibition_objects as e2 WHERE au1.artist_id=a1.artist_id and au2.artist_id=a2.artist_id and au1.role=? and au2.role=? and a1.artist_id>a2.artist_id and au1.object_id=e1.object_id and au2.object_id=e2.object_id and e1.exhibition_id=e2.exhibition_id group by a1.artist_id, a2.artist_id";
 			List<Adiacenze> archi = new ArrayList<>();
 			Connection conn = DBConnect.getConnection();
 	
 			try {
 				PreparedStatement st = conn.prepareStatement(sql);
+				st.setString(1, ruolo);
+				st.setString(2, ruolo);
 				ResultSet res = st.executeQuery();
 				while (res.next()) {
 					if (artisti.containsKey(res.getInt("a1")) && artisti.containsKey(res.getInt("a2")))
