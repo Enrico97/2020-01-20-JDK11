@@ -142,4 +142,8 @@ public class ArtsmiaDAO {
 				return null;
 			}
 		}
+	
+	public Map<Integer, Artists> mappaArtisti() {
+		return artisti;
+	}
 }

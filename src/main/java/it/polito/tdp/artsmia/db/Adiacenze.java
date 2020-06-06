@@ -67,7 +67,7 @@ public class Adiacenze implements Comparable <Adiacenze>{
 
 	@Override
 	public String toString() {
-		return a1.getName() + " " + a2.getName() + " " + peso + "\n";
+		return a1.getArtist_id() + " - " + a2.getArtist_id() + " : " + peso + "\n";
 	}
 
 
